@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastermind</title>
+    <style>
+        body {
+            background-color: #646060;
+        }
+
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: orangered solid 2px;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            margin-right: 5px;
+            margin-bottom: 10px;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+        }
+
+        .cuadrado {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+            border: 1px solid #000000;
+        }
+
+        form {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        input[type="submit"] {
+            background-color: #ffffff;
+            border: black solid 1px;
+            color: #000000;
+            font-weight: bold;
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #59a3f1;
+        }
+    </style>
+</head>
+
+<body>
+    <datalist id="presets">
+        {% for name, color in colores.items() %}
+        <option value="{{ color }}">{{ name }}</option>
+        {% endfor %}
+    </datalist>
+    <h2>HISTORIAL</h2>
+    {% if resultado_jugador %}
+    <div>
+        <p>Jugador - {{ resultado_jugador }}</p>
+    </div>
+    {% endif %}
+
+    <br>
+
+    <div>
+        {% for intentos in historial %}
+        {% for color in intentos["intentos"] %}
+        <input type="color" value="{{ color }}" disabled>
+        {% endfor %}
+        {% for i in range(4) %}
+        {% set color = intentos["intentos"][i] %}
+        {% if color == secreto[i] %}
+        {% set background_color = "#00ff00" %}
+        {% elif color in secreto %}
+        {% set background_color = "#ffff00" %}
+        {% else %}
+        {% set background_color = "#FF0000" %}
+        {% endif %}
+        <span class="cuadrado" style="background-color: {{ background_color }}"></span>
+        {% endfor %}
+        <br>
+        {% endfor %}
+    </div>
+
+    <br>
+
+    <div>
+        <p>Jugada</p>
+        <form action="" method="post">
+            {% for i in range(4) %}
+            <input type="color" list="presets" name="intento[{{ i }}]" value="{{ intento[i] if intento else '' }}">
+            {% endfor %}
+            <br><br>
+            <input type="submit" value="Intentar">
+        </form> <br>
+        <form action="{{ url_for('reiniciar') }}">
+            <br>
+            <input type="submit" value="Reiniciar">
+        </form>
+    </div>
+</body>
+
+</html>
